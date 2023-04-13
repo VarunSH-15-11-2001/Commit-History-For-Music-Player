@@ -6,6 +6,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class MusicPlayerView extends JFrame implements ChangeListener {
+
     private JLabel titleLabel = new JLabel("Title:");
     private JLabel artistLabel = new JLabel("Artist:");
     private JLabel durationLabel = new JLabel("Duration (s):");

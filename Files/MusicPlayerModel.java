@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
 public class MusicPlayerModel {
     private ArrayList<Song> playlist = new ArrayList<Song>();
     private Song currentSong;
@@ -35,6 +34,26 @@ public class MusicPlayerModel {
         playing = false;
         paused = false;
         notifyChangeListeners();
+    }
+
+    public void nextSong() {
+        int currentIndex = playlist.indexOf(currentSong);
+        if (currentIndex < playlist.size() - 1) {
+            currentSong = playlist.get(currentIndex + 1);
+            playing = true;
+            paused = false;
+            notifyChangeListeners();
+        }
+    }
+    
+    public void prevSong() {
+        int currentIndex = playlist.indexOf(currentSong);
+        if (currentIndex > 0) {
+            currentSong = playlist.get(currentIndex - 1);
+            playing = true;
+            paused = false;
+            notifyChangeListeners();
+        }
     }
 
     public Song getCurrentSong() {
