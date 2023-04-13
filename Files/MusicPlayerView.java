@@ -5,6 +5,8 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import java.io.File;
+
 public class MusicPlayerView extends JFrame implements ChangeListener {
 
     private JLabel titleLabel = new JLabel("Title:");
@@ -20,10 +22,13 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
 
     public JButton nextButton = new JButton("Next Song");
     public JButton prevButton = new JButton("Prev Song");
-    private JList<Song> playlist = new JList<Song>();
-    private DefaultListModel<Song> playlistModel = new DefaultListModel<Song>();
-    private MusicPlayerModel model;
 
+    private JList<Song> playlist = new JList<Song>();
+    private DefaultListModel<Song> playlistModel = new DefaultListModel<>();
+
+
+
+    private MusicPlayerModel model;
     public MusicPlayerView(MusicPlayerModel model) {
         this.model = model;
         this.model.addChangeListener(this);
@@ -49,11 +54,25 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
         buttonPanel.add(prevButton);
         add(buttonPanel, BorderLayout.CENTER);
         playlist.setModel(playlistModel);
+        playlistModel.addAll(model.getPlaylist());
         add(new JScrollPane(playlist), BorderLayout.SOUTH);
         pack();
         setLocationRelativeTo(null);
-        setResizable(false);
+        setResizable(true);
+
+        createPlaylist();
     }
+
+    public void createPlaylist() {
+        File dir = new File("/Users/varunshankarhoskere/Desktop/Academics/PES/Sem6/OOAD/Project/Java-project/Songs");
+        for (File file : dir.listFiles()) {
+            if (file.isFile() && file.getName().endsWith(".mp3")) {
+                String title = file.getName().substring(0, file.getName().lastIndexOf('.'));
+                Song song = new Song(title, "unknown artist", 0);
+                playlistModel.addElement(song);
+            }
+        }
+    }    
 
     public void addListeners(ActionListener listener) {
         addButton.addActionListener(listener);
