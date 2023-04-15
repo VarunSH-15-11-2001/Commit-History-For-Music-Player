@@ -27,7 +27,6 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
     private DefaultListModel<Song> playlistModel = new DefaultListModel<>();
 
 
-
     private MusicPlayerModel model;
     public MusicPlayerView(MusicPlayerModel model) {
         this.model = model;
@@ -55,24 +54,43 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
         add(buttonPanel, BorderLayout.CENTER);
         playlist.setModel(playlistModel);
         playlistModel.addAll(model.getPlaylist());
-        add(new JScrollPane(playlist), BorderLayout.SOUTH);
         pack();
         setLocationRelativeTo(null);
         setResizable(true);
+        
+        String songs = "\n";
+        createPlaylist(songs);
 
-        createPlaylist();
+
     }
 
-    public void createPlaylist() {
+    public void createPlaylist(String songs) {
         File dir = new File("/Users/varunshankarhoskere/Desktop/Academics/PES/Sem6/OOAD/Project/Java-project/Songs");
         for (File file : dir.listFiles()) {
             if (file.isFile() && file.getName().endsWith(".mp3")) {
                 String title = file.getName().substring(0, file.getName().lastIndexOf('.'));
                 Song song = new Song(title, "unknown artist", 0);
                 playlistModel.addElement(song);
+                // System.out.println(song);
             }
         }
+
+        playlist.setModel(playlistModel);   
+
+        playlist.revalidate();
+        for (int i = 0; i < playlistModel.size(); i++) {
+            Song song = playlistModel.getElementAt(i);
+            songs = songs + song.getTitle() + "\n";
+            
+        }
+
+
+        JTextArea textArea = new JTextArea(songs);
+        textArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        add(scrollPane, BorderLayout.PAGE_END);
     }    
+    
 
     public void addListeners(ActionListener listener) {
         addButton.addActionListener(listener);
