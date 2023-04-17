@@ -58,7 +58,7 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
         setResizable(true);
         
         String songs = "\n";
-        createPlaylist(songs);
+        // createPlaylist(songs);
 
 
     }
