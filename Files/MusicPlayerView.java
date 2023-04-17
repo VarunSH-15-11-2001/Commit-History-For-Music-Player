@@ -22,7 +22,6 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
 
     public JButton nextButton = new JButton("Next Song");
     public JButton prevButton = new JButton("Prev Song");
-
     private JList<Song> playlist = new JList<Song>();
     private DefaultListModel<Song> playlistModel = new DefaultListModel<>();
 
@@ -88,7 +87,7 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
         JTextArea textArea = new JTextArea(songs);
         textArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textArea);
-        add(scrollPane, BorderLayout.PAGE_END);
+        add(scrollPane, BorderLayout.SOUTH);
     }    
     
 
