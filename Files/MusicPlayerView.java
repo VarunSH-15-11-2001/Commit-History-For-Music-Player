@@ -11,6 +11,7 @@ import javax.sound.sampled.*;
 import java.io.File;
 import java.io.IOException;
 
+
 public class MusicPlayerView extends JFrame implements ChangeListener {
 
     private JLabel titleLabel = new JLabel("Title:");
@@ -28,9 +29,18 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
     public JButton prevButton = new JButton("Prev Song");
     private JList<Song> playlist = new JList<Song>();
     private DefaultListModel<Song> playlistModel = new DefaultListModel<>();
+    int here,before,next;
 
     private JFrame frame;
     private Clip clip;
+    ArrayList <Clip> clipPlayList = new ArrayList<Clip>();
+
+    private JProgressBar progressBar;
+    GridBagConstraints gbc = new GridBagConstraints();
+
+    Clip currSong;
+
+    File dir = new File("/Users/varunshankarhoskere/Downloads/Junk");
 
 
     private MusicPlayerModel model;
@@ -58,6 +68,7 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
         buttonPanel.add(nextButton);
         buttonPanel.add(prevButton);
         add(buttonPanel, BorderLayout.CENTER);
+        // add(statusLabel,BorderLayout.SOUTH);
         playlist.setModel(playlistModel);
         playlistModel.addAll(model.getPlaylist());
         pack();
@@ -65,36 +76,11 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
         setResizable(true);
         
         String songs = "\n";
-        // createPlaylist(songs);
-
+        createPlaylist(songs);
 
     }
 
-    public void createPlaylist(String songs) {
-        File dir = new File("/Users/varunshankarhoskere/Downloads/Junk");
-        for (File file : dir.listFiles()) {
-            if (file.isFile() && file.getName().endsWith(".wav")) {
-                String title = file.getName().substring(0, file.getName().lastIndexOf('.'));
-                Song song = new Song(title, "unknown artist", 0);
-                playlistModel.addElement(song);
-                // System.out.println(song);
-            }
-        }
-
-        playlist.setModel(playlistModel);   
-
-        playlist.revalidate();
-        for (int i = 0; i < playlistModel.size(); i++) {
-            Song song = playlistModel.getElementAt(i);
-            songs = songs + song.getTitle() + "\n";
-        }
-
-
-        JTextArea textArea = new JTextArea(songs);
-        textArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(textArea);
-        add(scrollPane, BorderLayout.SOUTH);
-
+    public void songMaker() {
         {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setFileFilter(new FileNameExtensionFilter(
@@ -102,6 +88,18 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
             int result = fileChooser.showOpenDialog(frame);
             if (result == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
+
+                // File[] files = dir.listFiles(new fileNameFilter() {
+                //     public boolean accept(File dir, String name) {
+                //         return name.equals(filename);
+                //     }
+                // });
+                // for(File file: files) {
+                //     if(file.getName().equals(playlistModel.getElementAt(0))) {
+                //         selectedFile = file;
+                //     }
+                // }
+
                 titleLabel.setText(selectedFile.getAbsolutePath());
                 
                 if (clip != null) {
@@ -130,34 +128,80 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
                     ex.printStackTrace();
                     // updateStatusLabel("Line unavailable");
                 }
+
+                clip.start();
             }
         }
-    }    
-    
+        
+    }
 
-    
+    public void createPlaylist(String songs) {
+        File dir = new File("/Users/varunshankarhoskere/Downloads/Junk");
+        for (File file : dir.listFiles()) {
+            if (file.isFile() && file.getName().endsWith(".wav")) {
+                String title = file.getName().substring(0, file.getName().lastIndexOf('.'));
+                Song song = new Song(title, "unknown artist", 0);
+                playlistModel.addElement(song);
+                // System.out.println(song);
+                
+                try {
+                    AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(file);
+                    clip = AudioSystem.getClip();
+                    clip.open(audioInputStream);
+                } catch (UnsupportedAudioFileException ex) {
+                    ex.printStackTrace();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                } catch (LineUnavailableException ex) {
+                    ex.printStackTrace();
+                }
+                clipPlayList.add(clip);
+            }
+        }
+
+        playlist.setModel(playlistModel);   
+
+        playlist.revalidate();
+        for (int i = 0; i < playlistModel.size(); i++) {
+            Song song = playlistModel.getElementAt(i);
+            songs = songs + song.getTitle() + "\n";
+        }
+
+        
+        JTextArea textArea = new JTextArea(songs);
+        textArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        add(scrollPane, BorderLayout.SOUTH);
+
+    }
     
 
     public void addListeners(ActionListener listener) {
         addButton.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                createPlaylist("\n");
+                songMaker();
             }
         });    
         playButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                clip.start();
+                currSong = clipPlayList.get(0);
+                currSong.start();
             }
         });
         pauseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                clip.stop();
+                currSong.stop();
             }
         });
-        // stopButton.addActionListener(listener);
+        nextButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
     }
 
     public void clearInputs() {
