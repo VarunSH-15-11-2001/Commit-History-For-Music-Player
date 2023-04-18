@@ -115,6 +115,7 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
                         selectedFile);
                     clip = AudioSystem.getClip();
                     clip.open(audioInputStream);
+                    // clip.start();
                     // progressBar.setMaximum((int) clip.getMicrosecondLength() / 1000000);
                     // progressBar.setValue(0);
                     // updateStatusLabel("Ready to play: " + selectedFile.getName());
@@ -144,8 +145,18 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
                 createPlaylist("\n");
             }
         });    
-        playButton.addActionListener(listener);
-        pauseButton.addActionListener(listener);
+        playButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clip.start();
+            }
+        });
+        pauseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clip.stop();
+            }
+        });
         // stopButton.addActionListener(listener);
     }
 
