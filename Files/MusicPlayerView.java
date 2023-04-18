@@ -189,6 +189,16 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
                 currSong.start();
             }
         });
+
+        prevButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currSong.stop();
+                here-=1;
+                currSong = clipPlayList.get(here);
+                currSong.start();
+            }
+        });
     }
 
     public void clearInputs() {
