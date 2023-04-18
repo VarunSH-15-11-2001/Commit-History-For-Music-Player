@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import javax.sound.sampled.*;
 
 import java.io.File;
+import java.io.IOException;
 
 public class MusicPlayerView extends JFrame implements ChangeListener {
 
@@ -24,6 +28,9 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
     public JButton prevButton = new JButton("Prev Song");
     private JList<Song> playlist = new JList<Song>();
     private DefaultListModel<Song> playlistModel = new DefaultListModel<>();
+
+    private JFrame frame;
+    private Clip clip;
 
 
     private MusicPlayerModel model;
@@ -80,7 +87,6 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
         for (int i = 0; i < playlistModel.size(); i++) {
             Song song = playlistModel.getElementAt(i);
             songs = songs + song.getTitle() + "\n";
-            
         }
 
 
@@ -88,6 +94,43 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
         textArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textArea);
         add(scrollPane, BorderLayout.SOUTH);
+
+        {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setFileFilter(new FileNameExtensionFilter(
+                "Audio Files", "wav", "mp3", "au", "aif"));
+            int result = fileChooser.showOpenDialog(frame);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                titleLabel.setText(selectedFile.getAbsolutePath());
+                
+                if (clip != null) {
+                    clip.stop();
+                    clip.close();
+                }
+
+                // create an audio stream and take clips from it and load them into the clip obj
+                try {
+                    AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(
+                        selectedFile);
+                    clip = AudioSystem.getClip();
+                    clip.open(audioInputStream);
+                    // progressBar.setMaximum((int) clip.getMicrosecondLength() / 1000000);
+                    // progressBar.setValue(0);
+                    // updateStatusLabel("Ready to play: " + selectedFile.getName());
+                    // updatePauseResumeButtonLabel();
+                } catch (UnsupportedAudioFileException ex) {
+                    ex.printStackTrace();
+                    // updateStatusLabel("Unsupported audio file");
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                    // updateStatusLabel("Error opening audio file");
+                } catch (LineUnavailableException ex) {
+                    ex.printStackTrace();
+                    // updateStatusLabel("Line unavailable");
+                }
+            }
+        }
     }    
     
 
