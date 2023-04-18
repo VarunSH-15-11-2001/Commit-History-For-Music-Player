@@ -87,6 +87,7 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
 
     public void songMaker() {
         {
+            // change to the directory where the songs are stored
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setFileFilter(new FileNameExtensionFilter(
                 "Audio Files", "wav", "mp3", "au", "aif"));
@@ -140,6 +141,8 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
     }
 
     public void createPlaylist(String songs) {
+        
+        // change to the directory where the songs are stored
         File dir = new File("/Users/varunshankarhoskere/Downloads/Junk");
 
         for (File file : dir.listFiles()) {
@@ -213,6 +216,8 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
                 here+=1;
                 currSong = clipPlayList.get(here);
                 currSong.start();
+                timer.restart();
+                startTimer();
             }
         });
 
@@ -223,6 +228,8 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
                 here-=1;
                 currSong = clipPlayList.get(here);
                 currSong.start();
+                timer.restart();
+                startTimer();
             }
         });
     }
