@@ -29,7 +29,7 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
     public JButton prevButton = new JButton("Prev Song");
     private JList<Song> playlist = new JList<Song>();
     private DefaultListModel<Song> playlistModel = new DefaultListModel<>();
-    int here,before,next;
+    int here=0,before,next;
 
     private JFrame frame;
     private Clip clip;
@@ -89,17 +89,6 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
             if (result == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
 
-                // File[] files = dir.listFiles(new fileNameFilter() {
-                //     public boolean accept(File dir, String name) {
-                //         return name.equals(filename);
-                //     }
-                // });
-                // for(File file: files) {
-                //     if(file.getName().equals(playlistModel.getElementAt(0))) {
-                //         selectedFile = file;
-                //     }
-                // }
-
                 titleLabel.setText(selectedFile.getAbsolutePath());
                 
                 if (clip != null) {
@@ -107,26 +96,21 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
                     clip.close();
                 }
 
-                // create an audio stream and take clips from it and load them into the clip obj
+                
                 try {
                     AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(
                         selectedFile);
                     clip = AudioSystem.getClip();
                     clip.open(audioInputStream);
-                    // clip.start();
-                    // progressBar.setMaximum((int) clip.getMicrosecondLength() / 1000000);
-                    // progressBar.setValue(0);
-                    // updateStatusLabel("Ready to play: " + selectedFile.getName());
-                    // updatePauseResumeButtonLabel();
                 } catch (UnsupportedAudioFileException ex) {
                     ex.printStackTrace();
-                    // updateStatusLabel("Unsupported audio file");
+                    
                 } catch (IOException ex) {
                     ex.printStackTrace();
-                    // updateStatusLabel("Error opening audio file");
+                    
                 } catch (LineUnavailableException ex) {
                     ex.printStackTrace();
-                    // updateStatusLabel("Line unavailable");
+                    
                 }
 
                 clip.start();
@@ -186,7 +170,7 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
         playButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                currSong = clipPlayList.get(0);
+                currSong = clipPlayList.get(here);
                 currSong.start();
             }
         });
@@ -199,7 +183,10 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
         nextButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                currSong.stop();
+                here+=1;
+                currSong = clipPlayList.get(here);
+                currSong.start();
             }
         });
     }
