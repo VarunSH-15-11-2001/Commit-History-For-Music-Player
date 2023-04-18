@@ -40,7 +40,7 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
 
     Clip currSong;
 
-    File dir = new File("/Users/varunshankarhoskere/Downloads/Junk");
+    File dir = new File("D:\\PES\\SEM 6\\test");
 
 
     private MusicPlayerModel model;
@@ -120,7 +120,7 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
     }
 
     public void createPlaylist(String songs) {
-        File dir = new File("/Users/varunshankarhoskere/Downloads/Junk");
+        File dir = new File("D:\\PES\\SEM 6\\test");
         for (File file : dir.listFiles()) {
             if (file.isFile() && file.getName().endsWith(".wav")) {
                 String title = file.getName().substring(0, file.getName().lastIndexOf('.'));
