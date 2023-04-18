@@ -32,15 +32,16 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
     int here=0,before,next;
 
     private JFrame frame;
-    private Clip clip;
-    ArrayList <Clip> clipPlayList = new ArrayList<Clip>();
-
     private JProgressBar progressBar;
+    private Clip clip;
+    private JLabel statusLabel;
+    private Timer timer;
+    ArrayList <Clip> clipPlayList = new ArrayList<Clip>();
     GridBagConstraints gbc = new GridBagConstraints();
 
     Clip currSong;
 
-    File dir = new File("/Users/varunshankarhoskere/Downloads/Junk");
+    File dir = new File("D:\\PES\\SEM 6\\test");
 
 
     private MusicPlayerModel model;
@@ -60,6 +61,7 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
         inputPanel.add(durationField);
         add(inputPanel, BorderLayout.NORTH);
 
+
         JPanel buttonPanel = new JPanel(new FlowLayout());
         buttonPanel.add(addButton);
         buttonPanel.add(playButton);
@@ -67,6 +69,26 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
         // buttonPanel.add(stopButton);
         buttonPanel.add(nextButton);
         buttonPanel.add(prevButton);
+        timer = new Timer(1000, new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (clip != null && clip.isRunning()) {
+                    int currentTime = (int) clip.getMicrosecondPosition() / 1000000;
+                    progressBar.setValue(currentTime);
+                    int totalTime = (int) clip.getMicrosecondLength() / 1000000;
+                    int remainingTime = totalTime - currentTime;
+                    String timeDisplay = String.format("%02d:%02d / %02d:%02d",
+                            currentTime / 60, currentTime % 60,
+                            totalTime / 60, totalTime % 60);
+                    statusLabel.setText(timeDisplay);
+                    System.out.println(timeDisplay);
+                }
+            }
+        });
+
+        progressBar = new JProgressBar();
+        buttonPanel.add(progressBar);
+
         add(buttonPanel, BorderLayout.CENTER);
         // add(statusLabel,BorderLayout.SOUTH);
         playlist.setModel(playlistModel);
@@ -74,7 +96,9 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
         pack();
         setLocationRelativeTo(null);
         setResizable(true);
-        
+
+
+
         String songs = "\n";
         createPlaylist(songs);
 
@@ -117,8 +141,14 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
         
     }
 
+
+    @Override
+    protected boolean isRootPaneCheckingEnabled() {
+        return super.isRootPaneCheckingEnabled();
+    }
+
     public void createPlaylist(String songs) {
-        File dir = new File("/Users/varunshankarhoskere/Downloads/Junk");
+        File dir = new File("D:\\PES\\SEM 6\\test");
         for (File file : dir.listFiles()) {
             if (file.isFile() && file.getName().endsWith(".wav")) {
                 String title = file.getName().substring(0, file.getName().lastIndexOf('.'));
@@ -170,12 +200,14 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
             public void actionPerformed(ActionEvent e) {
                 currSong = clipPlayList.get(here);
                 currSong.start();
+                timer.start();
             }
         });
         pauseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 currSong.stop();
+                timer.stop();
             }
         });
         nextButton.addActionListener(new ActionListener() {
@@ -186,6 +218,7 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
                 here+=1;
                 currSong = clipPlayList.get(here);
                 currSong.start();
+                timer.restart();
             }
         });
 
@@ -196,9 +229,11 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
                 here-=1;
                 currSong = clipPlayList.get(here);
                 currSong.start();
+                timer.restart();
             }
         });
     }
+
 
     public void clearInputs() {
         titleField.setText("");
@@ -264,4 +299,6 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
             setPauseButtonEnabled(playing && !paused);
             // setStopButtonEnabled(playing);
         }
-    }        
+
+
+}
