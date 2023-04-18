@@ -37,9 +37,12 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
     ArrayList <Clip> clipPlayList = new ArrayList<Clip>();
 
     private JProgressBar progressBar;
+    
     GridBagConstraints gbc = new GridBagConstraints();
 
     Clip currSong;
+
+    private Timer timer;
 
     File dir = new File("/Users/varunshankarhoskere/Downloads/Junk");
 
@@ -102,6 +105,24 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
                         selectedFile);
                     clip = AudioSystem.getClip();
                     clip.open(audioInputStream);
+                    progressBar = new JProgressBar();
+                    progressBar.setMaximum((int) clip.getMicrosecondLength() / 1000000);
+                    progressBar.setValue(0);
+                    timer = new Timer(1000, new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            if (clip != null && clip.isRunning()) {
+                                int currentTime = (int) clip.getMicrosecondPosition() / 1000000;
+                                progressBar.setValue(currentTime);
+                                int totalTime = (int) clip.getMicrosecondLength() / 1000000;
+                                int remainingTime = totalTime - currentTime;
+                                String timDisp = String.format("%02d:%02d / %02d:%02d",
+                                currentTime / 60, currentTime % 60,
+                                totalTime / 60, totalTime % 60);
+                                System.out.println(timDisp);
+                                // statusLabel.setText(String);
+                            }
+                        }
+                    });
                 } catch (UnsupportedAudioFileException ex) {
                     ex.printStackTrace();
                     
@@ -112,9 +133,7 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
                     ex.printStackTrace();   
                 }
                 clipPlayList.add(clip);
-                for(Clip c:clipPlayList) {
-                    System.out.println("c");
-                }
+                add(progressBar, BorderLayout.EAST);
             }
         }
         
@@ -175,6 +194,7 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
             public void actionPerformed(ActionEvent e) {
                 currSong = clipPlayList.get(here);
                 currSong.start();
+                startTimer();
             }
         });
         pauseButton.addActionListener(new ActionListener() {
@@ -182,6 +202,7 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
             public void actionPerformed(ActionEvent e) {
                 currSong = clipPlayList.get(here);
                 currSong.stop();
+                stopTimer();
             }
         });
         nextButton.addActionListener(new ActionListener() {
@@ -254,6 +275,18 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
         // public void setStopButtonEnabled(boolean enabled) {
         //     stopButton.setEnabled(enabled);
         // }
+
+        private void startTimer() {
+            if (!timer.isRunning()) {
+                timer.start();
+            }
+        }
+    
+        private void stopTimer() {
+            if (timer.isRunning()) {
+                timer.stop();
+            }
+        }
         
         @Override
         public void stateChanged(ChangeEvent e) {
