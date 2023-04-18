@@ -109,10 +109,8 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
                     ex.printStackTrace();
                     
                 } catch (LineUnavailableException ex) {
-                    ex.printStackTrace();
-                    
+                    ex.printStackTrace();   
                 }
-
                 clip.start();
             }
         }
@@ -184,6 +182,7 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 currSong.stop();
+                currSong.setMicrosecondPosition(0);
                 here+=1;
                 currSong = clipPlayList.get(here);
                 currSong.start();
