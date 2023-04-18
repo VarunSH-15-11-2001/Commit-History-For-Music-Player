@@ -28,8 +28,8 @@ public class MusicPlayerController implements ActionListener {
             }
         } else if (e.getSource() == view.pauseButton) {
             model.pauseSong();
-        } else if (e.getSource() == view.stopButton) {
-            model.stopSong();
+        // } else if (e.getSource() == view.stopButton) {
+        //     model.stopSong();
         } else if (e.getSource() == view.nextButton) {
             model.nextSong();
         } else if(e.getSource() == view.prevButton) {

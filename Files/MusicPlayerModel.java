@@ -19,6 +19,7 @@ public class MusicPlayerModel {
 
     public void playSong(Song song) {
         currentSong = song;
+        System.out.println("Clicked play button");
         playing = true;
         paused = false;
         notifyChangeListeners();

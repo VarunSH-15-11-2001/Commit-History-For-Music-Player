@@ -18,7 +18,7 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
     public JButton addButton = new JButton("Add");
     public JButton playButton = new JButton("Play");
     public JButton pauseButton = new JButton("Pause");
-    public JButton stopButton = new JButton("Stop");
+    // public JButton stopButton = new JButton("Stop");
 
     public JButton nextButton = new JButton("Next Song");
     public JButton prevButton = new JButton("Prev Song");
@@ -47,7 +47,7 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
         buttonPanel.add(addButton);
         buttonPanel.add(playButton);
         buttonPanel.add(pauseButton);
-        buttonPanel.add(stopButton);
+        // buttonPanel.add(stopButton);
         buttonPanel.add(nextButton);
         buttonPanel.add(prevButton);
         add(buttonPanel, BorderLayout.CENTER);
@@ -64,9 +64,9 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
     }
 
     public void createPlaylist(String songs) {
-        File dir = new File("/Users/varunshankarhoskere/Desktop/Academics/PES/Sem6/OOAD/Project/Java-project/Songs");
+        File dir = new File("/Users/varunshankarhoskere/Downloads/Junk");
         for (File file : dir.listFiles()) {
-            if (file.isFile() && file.getName().endsWith(".mp3")) {
+            if (file.isFile() && file.getName().endsWith(".wav")) {
                 String title = file.getName().substring(0, file.getName().lastIndexOf('.'));
                 Song song = new Song(title, "unknown artist", 0);
                 playlistModel.addElement(song);
@@ -91,11 +91,19 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
     }    
     
 
+    
+    
+
     public void addListeners(ActionListener listener) {
-        addButton.addActionListener(listener);
+        addButton.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                createPlaylist("\n");
+            }
+        });    
         playButton.addActionListener(listener);
         pauseButton.addActionListener(listener);
-        stopButton.addActionListener(listener);
+        // stopButton.addActionListener(listener);
     }
 
     public void clearInputs() {
@@ -143,9 +151,9 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
             pauseButton.setEnabled(enabled);
         }
         
-        public void setStopButtonEnabled(boolean enabled) {
-            stopButton.setEnabled(enabled);
-        }
+        // public void setStopButtonEnabled(boolean enabled) {
+        //     stopButton.setEnabled(enabled);
+        // }
         
         @Override
         public void stateChanged(ChangeEvent e) {
@@ -160,6 +168,6 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
             }
             setPlayButtonEnabled(!playing);
             setPauseButtonEnabled(playing && !paused);
-            setStopButtonEnabled(playing);
+            // setStopButtonEnabled(playing);
         }
     }        
