@@ -80,7 +80,6 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
         setResizable(true);
         
         String songs = "\n";
-        // createPlaylist(songs);
 
     }
 
@@ -96,7 +95,8 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
                 File selectedFile = fileChooser.getSelectedFile();
                 String title = selectedFile.getName().substring(0, selectedFile.getName().lastIndexOf('.'));
                 Song song = new Song(title, "unknown artist", 0);
-                playlistModel.addElement(song);
+
+                
                 if (clip != null) {
                     clip.stop();
                     clip.close();
@@ -124,6 +124,7 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
                             }
                         }
                     });
+                    stopTimer();
                 } catch (UnsupportedAudioFileException ex) {
                     ex.printStackTrace();
                     
@@ -140,6 +141,10 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
         
     }
 
+    public void helpCreate(String songs) {
+        createPlaylist(songs);
+    }
+
     public void createPlaylist(String songs) {
         
         // change to the directory where the songs are stored
@@ -154,6 +159,25 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
                     AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(file);
                     clip = AudioSystem.getClip();
                     clip.open(audioInputStream);
+                    progressBar = new JProgressBar();
+                    progressBar.setMaximum((int) clip.getMicrosecondLength() / 1000000);
+                    progressBar.setValue(0);
+                    timer = new Timer(1000, new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            if (clip != null && clip.isRunning()) {
+                                int currentTime = (int) clip.getMicrosecondPosition() / 1000000;
+                                progressBar.setValue(currentTime);
+                                int totalTime = (int) clip.getMicrosecondLength() / 1000000;
+                                int remainingTime = totalTime - currentTime;
+                                String timDisp = String.format("%02d:%02d / %02d:%02d",
+                                currentTime / 60, currentTime % 60,
+                                totalTime / 60, totalTime % 60);
+                                System.out.println(timDisp);
+                                // statusLabel.setText(String);
+                            }
+                        }
+                    });
+                    stopTimer();
                 } catch (UnsupportedAudioFileException ex) {
                     ex.printStackTrace();
                 } catch (IOException ex) {
@@ -162,6 +186,7 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
                     ex.printStackTrace();
                 }
                 clipPlayList.add(clip);
+                add(progressBar, BorderLayout.EAST);
             }
         }
 
@@ -186,15 +211,17 @@ public class MusicPlayerView extends JFrame implements ChangeListener {
         addButton.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("starting song maker");
+                // System.out.println("starting song maker");
                 songMaker();
-                System.out.println("finished song maker");
+                // System.out.println("finished song maker");
                 clip = clipPlayList.get(here);
+                
             }
         });    
         playButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                createPlaylist("\n");
                 currSong = clipPlayList.get(here);
                 currSong.start();
                 startTimer();
